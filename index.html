@@ -6,18 +6,37 @@
 	</head>
 	 <script src="http://code.jquery.com/jquery-1.5.js"></script>
 	<script type="text/javascript">
-		var i = false,timer,cursor,command,console;
+	
+		var i = false,timer,backspacing,doFakeBackspace,timer2,cursor,command,console;
+		doFakeBackspace=true;
+		function backspace(source){
+				if((!source)&&backspacing&&doFakeBackspace){
+					// If a backspace is already in progress and this did not come from the timer, this means that backspace key repeats, stop emulating it
+					console.append("<br/>This system supports key repeating backspace, key repeat faking for backspace has been disabled");
+					doFakeBackspace=false;
+					clearInterval(timer2);
+				}
+				command.text(command.text().substring(0, command.text().length-1));
+				if(doFakeBackspace&&!backspacing){
+					clearInterval(timer2);
+					timer2= setInterval('backspace(true)', 50);
+					
+				}
+				
+			
+				backspacing=true
+			
+		}
 		window.onload=function() {
 			
 			 console=$("#console");
 			 command=$("#command");
+
 			 console.empty();
 			 console.append("Welcome<br/>This screen verifies that you have javascript enabled.");
 			 $(document).keydown(function(event) {
-				 
-				// alert(event.which);
 				 if(event.which==8){
-					command.text(command.text().substring(0, command.text().length-1));
+					 backspace(false);
 				}else if(event.which==13){
 					console.append("<br/>"+command.text());
 					command.empty();
@@ -26,6 +45,14 @@
 					event.preventDefault(); // Prevent '/' from triggering the quick find
 				}
 			 });
+			 
+			$(document).keyup(function(event) {
+				if(event.which==8){
+					backspacing=false;
+					clearInterval(timer2);
+				}
+			});
+							 
 			$(document).keypress(function(event) {
 				if(event.which>=33&&event.which<=126){
 					command.text(command.text()+String.fromCharCode(event.which));
@@ -35,8 +62,10 @@
 			});
 
 			timer = setInterval('blink()', 500);
+			
 			cursor= document.getElementById('cursor');
 		}
+
 		function blink() {
 			if(i){cursor.style.backgroundColor = '#ffffff';i=false;}else{cursor.style.backgroundColor = '#000000';i=true;}
 		}
@@ -50,11 +79,10 @@
 					You must enable javascript for this to work.
 				</div>
 				<div id="input">
-					<span id="prompt">Command:&nbsp;</span><span id="command"></span><span id="cursor">&nbsp;&nbsp;</span>
+					<span id="prompt">Command:&nbsp;</span><span id="command"></span><span id="cursor">&nbsp;</span>
 				</div>
 			</div>
 		</div>
-	
 	</body>
 </html>
 
