@@ -1,0 +1,61 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title>AlaskaJS Demo</title>
+		<link rel="stylesheet" href="game.css" type="text/css" />
+	</head>
+	 <script src="http://code.jquery.com/jquery-1.5.js"></script>
+	<script type="text/javascript">
+		var i = false,timer,cursor,command,console;
+		window.onload=function() {
+			
+			 console=$("#console");
+			 command=$("#command");
+			 console.empty();
+			 console.append("Welcome<br/>This screen verifies that you have javascript enabled.");
+			 $(document).keydown(function(event) {
+				 
+				// alert(event.which);
+				 if(event.which==8){
+					command.text(command.text().substring(0, command.text().length-1));
+				}else if(event.which==13){
+					console.append("<br/>"+command.text());
+					command.empty();
+					
+				}else if(event.which==47){
+					event.preventDefault(); // Prevent '/' from triggering the quick find
+				}
+			 });
+			$(document).keypress(function(event) {
+				if(event.which>=33&&event.which<=126){
+					command.text(command.text()+String.fromCharCode(event.which));
+				}else if(event.which==32){
+					command.html(command.html()+"&nbsp;");
+				}
+			});
+
+			timer = setInterval('blink()', 500);
+			cursor= document.getElementById('cursor');
+		}
+		function blink() {
+			if(i){cursor.style.backgroundColor = '#ffffff';i=false;}else{cursor.style.backgroundColor = '#000000';i=true;}
+		}
+	</script>
+	<body>
+	
+	<div id="headerbar"><time>12:55PM</time> - 100Pts - Your Red House</div>
+		<div id="gamewindow">
+			<div id="content">	
+				<div id="console">
+					You must enable javascript for this to work.
+				</div>
+				<div id="input">
+					<span id="prompt">Command:&nbsp;</span><span id="command"></span><span id="cursor">&nbsp;&nbsp;</span>
+				</div>
+			</div>
+		</div>
+	
+	</body>
+</html>
+
+

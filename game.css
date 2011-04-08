@@ -1,0 +1,56 @@
+body
+{
+	margin: 0px 0px 0px 0px;
+	padding: 0px 0px 0px 0px;
+	background-color: black;
+	overflow:none;
+	font-family: 'lucida console', monospace;
+}
+
+#headerbar
+{
+	background-color: gray;
+	top: 0;
+	color: black;
+	width: 100%;
+	height: auto;
+}
+
+
+#content
+{
+
+	width:100%;
+	
+/*;bottom:20px;	;height: 200px;*/
+	
+	color: white;
+}
+
+#console
+{
+/*;bottom:20px;*/
+}
+
+
+#input
+{
+
+	color: white;
+	/*;position:absolute;bottom:0;*/
+}
+
+#cursor
+{
+	background-color: white;
+}
+
+#gamewindow
+{
+	z-index:-1;
+position:absolute;
+	bottom:0;
+	overflow:none;
+	width:100%;
+
+}
