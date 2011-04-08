@@ -6,32 +6,31 @@
 	</head>
 	<script src="http://code.jquery.com/jquery-1.5.js"></script>
 	<script type="text/javascript">
-		var i = false,timer,backspacing,rWait,doFakeBackspace,timer2,cursor,command,console;
+		var i = false,timer,backspacing,mode,rWait,doFakeBackspace,timer2,cursor,command,console;
 		doFakeBackspace=true;
 		keysUnDefaulted=[47];
+		mode=false;
 		function backspace(source){
-				if((!source)&&backspacing&&doFakeBackspace){
-					// If a backspace is already in progress and this did not come from the timer, this means that backspace key repeats, stop emulating it
-					console.append("<br/>This system supports key repeating backspace, key repeat faking for backspace has been disabled");
-					doFakeBackspace=false;
-					clearInterval(timer2);
+			if((!source)&&backspacing&&doFakeBackspace){
+				// If a backspace is already in progress and this did not come from the timer, this means that backspace key repeats, stop emulating it
+				console.append("<br/>It looks like this system supports key repeating backspace, key repeat faking for backspace has been disabled");
+				doFakeBackspace=false;
+				clearInterval(timer2);
+			}
+			command.text(command.text().substring(0, command.text().length-1));
+			if((doFakeBackspace&&(!backspacing||rWait))){
+				clearInterval(timer2);
+				var t=250;
+				if(rWait){
+					t=50;
+					rWait=false;
+				}else{
+					rWait=true;
 				}
-				command.text(command.text().substring(0, command.text().length-1));
-				if((doFakeBackspace&&(!backspacing||rWait))){
-					clearInterval(timer2);
-					var t=250;
-					if(rWait){
-						t=50;
-						rWait=false;
-					}else{
-						rWait=true;
-					}
-					timer2= setInterval('backspace(true)', t);					
-				}
-				
-			
-				backspacing=true
-			
+				timer2= setInterval('backspace(true)', t);					
+			}
+			backspacing=true;
+		
 		}
 		window.onload=function() {
 			
@@ -43,7 +42,9 @@
 			 console.append("Welcome<br/>This screen verifies that you have javascript enabled.");
 			 $(document).keydown(function(event) {
 				 if(event.which==8){
-					 backspace(false);
+					if(!mode){
+						backspace(false);
+					}
 				}else if(event.which==13){
 					console.append("<br/>"+command.html());
 					command.empty();
@@ -61,8 +62,11 @@
 			});
 							 
 			$(document).keypress(function(event) {
-			//	alert(event.which);
-				if(event.which>=33&&event.which<=126){
+				if(event.which==8){
+					 mode=true;
+					 backspace(false);
+				 }
+				else if(event.which>=33&&event.which<=126){
 					command.text(command.text()+String.fromCharCode(event.which));
 				}else if(event.which==32){
 					command.html(command.html()+"&nbsp;");
