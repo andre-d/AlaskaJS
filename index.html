@@ -4,11 +4,11 @@
 		<title>AlaskaJS Demo</title>
 		<link rel="stylesheet" href="game.css" type="text/css" />
 	</head>
-	 <script src="http://code.jquery.com/jquery-1.5.js"></script>
+	<script src="http://code.jquery.com/jquery-1.5.js"></script>
 	<script type="text/javascript">
-	
 		var i = false,timer,backspacing,doFakeBackspace,timer2,cursor,command,console;
 		doFakeBackspace=true;
+		keysUnDefaulted=[47];
 		function backspace(source){
 				if((!source)&&backspacing&&doFakeBackspace){
 					// If a backspace is already in progress and this did not come from the timer, this means that backspace key repeats, stop emulating it
@@ -19,7 +19,7 @@
 				command.text(command.text().substring(0, command.text().length-1));
 				if(doFakeBackspace&&!backspacing){
 					clearInterval(timer2);
-					timer2= setInterval('backspace(true)', 50);
+					timer2= setInterval('backspace(true)', 100);
 					
 				}
 				
@@ -38,12 +38,11 @@
 				 if(event.which==8){
 					 backspace(false);
 				}else if(event.which==13){
-					console.append("<br/>"+command.text());
+					console.append("<br/>"+command.html());
 					command.empty();
 					
-				}else if(event.which==47){
-					event.preventDefault(); // Prevent '/' from triggering the quick find
 				}
+				
 			 });
 			 
 			$(document).keyup(function(event) {
@@ -54,10 +53,18 @@
 			});
 							 
 			$(document).keypress(function(event) {
+			//	alert(event.which);
 				if(event.which>=33&&event.which<=126){
 					command.text(command.text()+String.fromCharCode(event.which));
 				}else if(event.which==32){
 					command.html(command.html()+"&nbsp;");
+				}
+				for(i=0;i<keysUnDefaulted.length;i++){
+					
+					if(event.which==keysUnDefaulted[i]){
+						event.preventDefault(); // Prevent '/' from triggering the quick find
+						break;
+					}
 				}
 			});
 
