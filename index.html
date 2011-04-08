@@ -18,7 +18,8 @@
 				doFakeBackspace=false;
 				clearInterval(timer2);
 			}
-			command.text(command.text().substring(0, command.text().length-1));
+			var cmdtxt=command.text();
+			command.text(cmdtxt.substring(0, cmdtxt.length-1));
 			if((doFakeBackspace&&(!backspacing||rWait))){
 				clearInterval(timer2);
 				var t; // Do it longer the first time to avoid accidentally deleting two characters with a tap
