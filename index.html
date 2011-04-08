@@ -6,7 +6,7 @@
 	</head>
 	<script src="http://code.jquery.com/jquery-1.5.js"></script>
 	<script type="text/javascript">
-		var i = false,timer,backspacing,doFakeBackspace,timer2,cursor,command,console;
+		var i = false,timer,backspacing,rWait,doFakeBackspace,timer2,cursor,command,console;
 		doFakeBackspace=true;
 		keysUnDefaulted=[47];
 		function backspace(source){
@@ -17,10 +17,16 @@
 					clearInterval(timer2);
 				}
 				command.text(command.text().substring(0, command.text().length-1));
-				if(doFakeBackspace&&!backspacing){
+				if((doFakeBackspace&&(!backspacing||rWait))){
 					clearInterval(timer2);
-					timer2= setInterval('backspace(true)', 100);
-					
+					var t=250;
+					if(rWait){
+						t=50;
+						rWait=false;
+					}else{
+						rWait=true;
+					}
+					timer2= setInterval('backspace(true)', t);					
 				}
 				
 			
@@ -31,6 +37,7 @@
 			
 			 console=$("#console");
 			 command=$("#command");
+			 rWait=false;
 
 			 console.empty();
 			 console.append("Welcome<br/>This screen verifies that you have javascript enabled.");
@@ -48,6 +55,7 @@
 			$(document).keyup(function(event) {
 				if(event.which==8){
 					backspacing=false;
+					rWait=false;
 					clearInterval(timer2);
 				}
 			});
