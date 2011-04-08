@@ -10,6 +10,7 @@
 		doFakeBackspace=true;
 		keysUnDefaulted=[47];
 		mode=false;
+		function flip(b){(b)?b=false:b=true;return b;};
 		function backspace(source){
 			if((!source)&&backspacing&&doFakeBackspace){
 				// If a backspace is already in progress and this did not come from the timer, this means that backspace key repeats, stop emulating it
@@ -20,14 +21,10 @@
 			command.text(command.text().substring(0, command.text().length-1));
 			if((doFakeBackspace&&(!backspacing||rWait))){
 				clearInterval(timer2);
-				var t=250; // Do it longer the first time to avoid accidentally deleting two characters with a tap
-				if(rWait){
-					t=50; 
-					rWait=false;
-				}else{
-					rWait=true;
-				}
-				timer2= setInterval('backspace(true)', t);					
+				var t; // Do it longer the first time to avoid accidentally deleting two characters with a tap
+				(rWait)?t=50:t=250;
+				rWait=flip(rWait);
+				timer2=setInterval('backspace(true)', t);					
 			}
 			backspacing=true;
 		
@@ -73,9 +70,9 @@
 					}
 				 }
 				else if(event.which>=33&&event.which<=126){
-					command.text(command.text()+String.fromCharCode(event.which));
+					command.append(String.fromCharCode(event.which));
 				}else if(event.which==32){
-					command.html(command.html()+"&nbsp;");
+					command.append("&nbsp;");
 				}
 				for(i=0;i<keysUnDefaulted.length;i++){
 					if(event.which==keysUnDefaulted[i]){
