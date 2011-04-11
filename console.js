@@ -1,106 +1,90 @@
-var i = false,timer,backspacing,mode,rWait,doFakeBackspace,timer2,cursor,command,console;
-doFakeBackspace=true;
-keysUnDefaulted=[47];
-mode=false;
-function flip(b){(b)?b=false:b=true;return b;};
-function backspace(source){
-	if((!source)&&backspacing&&doFakeBackspace){
-		// If a backspace is already in progress and this did not come from the timer, this means that backspace key repeats, stop emulating it
-		console.append("It looks like this system supports key repeating backspace, key repeat faking for backspace has been disabled");
-		doFakeBackspace=false;
-		clearInterval(timer2);
-	}
-	var cmdtxt=command.text();
-	command.text(cmdtxt.substring(0, cmdtxt.length-1));
-	if((doFakeBackspace&&(!backspacing||rWait))){
-		clearInterval(timer2);
-		var t; // Do it longer the first time to avoid accidentally deleting two characters with a tap
-		(rWait)?t=50:t=250;
-		rWait=flip(rWait);
-		timer2=setInterval('backspace(true)', t);					
-	}
-	backspacing=true;
-
+function Console(e){
+	this.i=true;
+	this.e=e;
+	this.timer;
+	this.backspacing;
+	this.mode=false;
+	this.test=2;
+	this.keysUnDefaulted=[47];
+	this.cursor;
+	this.command;
+	this.console;	
+	this.backspace=backspace;
+	this.whiteCursor=whiteCursor;
+	this.darkCursor=darkCursor;
+	this.blink=blink;
+	this.init=init;
+	this.init();
+	
 }
 
-window.onload=function() {
-	setTimes();
-	console=$("#console");
-	command=$("#command");
-	 
-	rWait=false;
+function backspace(source){
+	var cmdtxt=this.command.text();
+	this.command.text(cmdtxt.substring(0, cmdtxt.length-1));
+}
 
-	console.empty();
-	console.append("Welcome<br/>This screen verifies that you have javascript enabled.<br/>");
-	$(document).keydown(function(event) {
+
+
+function init() {
+	setTimes();
+	this.console=$("#console",this.e);
+	this.command=$("#command",this.e);
+	
+	this.rWait=false;
+	this.console.empty();
+	this.console.append("Welcome<br/>This screen verifies that you have javascript enabled.<br/>");
+	
+	$(document).keydown({t:this},function(event) {
+		t=event.data.t;
 		if(event.which==8){
-			if(!mode){
-				backspace(false);
+			if(!t.mode){
+				t.backspace(false);
 			}
 		}else if(event.which==13){
-			console.append("<br/>"+command.html());
-			command.empty();	
+			t.console.append("<br/>"+t.command.html());
+			t.command.empty();	
 		}
 	 });
 	 
-	$(document).keyup(function(event) {
-		if(event.which==8){
-			backspacing=false;
-			rWait=false;
-			clearInterval(timer2);
-		}
+	$(document).keyup({t:this},function(event) {
 	});
-					 
-	$(document).keypress(function(event) {
+	
+
+	$(document).keypress({t:this},function(event) {
+		t=event.data.t;
 		if(event.which==8){
-			if(!mode){
-				mode=true;
-				console.append("Your system supports keypress for backspace.<br/>");
+			if(!t.mode){
+				t.mode=true;
+				t.console.append("Your system supports keypress for backspace.<br/>");
 				// Do not send a backspace this time, because a keydown is also sent and we would backspace twice
 
 			}else{
-				backspace(false);
+				t.backspace(false);
 			}
 		 }
 		else if(event.which>=33&&event.which<=126){
-			command.append(String.fromCharCode(event.which));
+			t.command.append(String.fromCharCode(event.which));
 		}else if(event.which==32){
-			command.append("&nbsp;");
+			t.command.append("&nbsp;");
 		}
-		for(i=0;i<keysUnDefaulted.length;i++){
-			if(event.which==keysUnDefaulted[i]){
+		for(i=0;i<t.keysUnDefaulted.length;i++){
+			if(event.which==t.keysUnDefaulted[i]){
 				event.preventDefault(); // Prevent '/' from triggering the quick find
 				break;
 			}
 		}
 	});
-	cursor= document.getElementById('cursor');
-	timer = setInterval('blink()', 500);
-	whiteCursor();
+	this.cursor=$("#cursor",this.e);
+	this.cursor.css("background-color",'#ffffff')
+	this.timer = setInterval(jQuery.proxy(this.blink,this), 500);
+	this.whiteCursor();
 }
 
-function zeroPad(num,count)
-{
-	var numZeropad = num + '';
-	while(numZeropad.length < count) {
-		numZeropad = "0" + numZeropad;
-	}
-	return numZeropad;
-}
+function whiteCursor(){this.cursor.css("background-color",'#ffffff');this.i=false};
+function darkCursor(){this.cursor.css("background-color",'#000000');this.i=true};
 
-function formatDate(time){
-	var hr=(time.getHours()%12);
-	(hr==0) ? hr=12 : null;
-	(time.getHours()>11)? b="PM" : b="AM";
-	return hr+":"+zeroPad(time.getMinutes(),2)+":"+zeroPad(time.getSeconds(),2)+b;
-}
-
-function setTimes(){
-	$("time").text(formatDate(new Date()));	
-}
-function whiteCursor(){cursor.style.backgroundColor = '#ffffff';i=false};
-function darkCursor(){cursor.style.backgroundColor = '#000000';i=true};
 function blink() {
 	setTimes();
-	(i==true) ? whiteCursor() : darkCursor();
+	(this.i==true) ? this.whiteCursor() : this.darkCursor();
 }
+
